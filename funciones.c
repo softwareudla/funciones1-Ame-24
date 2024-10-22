@@ -2,12 +2,24 @@
 #include <string.h>
 #include "funciones.h"
 
-float ingresarDatos(char nombres[MAX_PRODUCTOS][20], float precios[MAX_PRODUCTOS], int totalProductos) {
+#define MAX_PRODUCTOS 10
+
+void ingresarDatos(char nombres[MAX_PRODUCTOS][50], float precios[MAX_PRODUCTOS], int totalProductos) {
     for (int i = 0; i < totalProductos; i++) {
         printf("Ingrese el nombre del producto %d: ", i + 1);
-        scanf("%s", nombres[i]);
-        printf("Ingrese el precio de %s: ", nombres[i]);
-        scanf("%f", &precios[i]);
+        fgets(nombres[i], 50, stdin);
+        nombres[i][strcspn(nombres[i], "\n")] = 0;
+
+        // Validar que el precio sea positivo
+        do {
+            printf("Ingrese el precio de %s: ", nombres[i]);
+            scanf("%f", &precios[i]);
+            if (precios[i] < 0) {
+                printf("Error: El precio no puede ser negativo.\n");
+            }
+        } while (precios[i] < 0);  // Repetir si el precio es negativo.
+
+        getchar();  // Limpiar el buffer
     }
 }
 
@@ -19,7 +31,7 @@ float calcularPrecioTotal(float precios[MAX_PRODUCTOS], int totalProductos) {
     return total;
 }
 
-float encontrarCaroYBarato(char nombres[MAX_PRODUCTOS][20], float precios[MAX_PRODUCTOS], int totalProductos) {
+float encontrarCaroYBarato(char nombres[MAX_PRODUCTOS][50], float precios[MAX_PRODUCTOS], int totalProductos) {
     int indiceCaro = 0, indiceBarato = 0;
     for (int i = 1; i < totalProductos; i++) {
         if (precios[i] > precios[indiceCaro]) {
@@ -29,15 +41,15 @@ float encontrarCaroYBarato(char nombres[MAX_PRODUCTOS][20], float precios[MAX_PR
             indiceBarato = i;
         }
     }
-    printf("El producto mas caro es '%s' con un precio de %.2f\n", nombres[indiceCaro], precios[indiceCaro]);
-    printf("El producto mas barato es '%s' con un precio de %.2f\n", nombres[indiceBarato], precios[indiceBarato]);
+    printf("El producto más caro es '%s' con un precio de %.2f\n", nombres[indiceCaro], precios[indiceCaro]);
+    printf("El producto más barato es '%s' con un precio de %.2f\n", nombres[indiceBarato], precios[indiceBarato]);
 }
 
 float calcularPromedio(float precios[MAX_PRODUCTOS], int totalProductos) {
     return calcularPrecioTotal(precios, totalProductos) / totalProductos;
 }
 
-void buscarProducto(char nombres[MAX_PRODUCTOS][20], float precios[MAX_PRODUCTOS], int totalProductos, char nombreBuscado[20]) {
+void buscarProducto(char nombres[MAX_PRODUCTOS][50], float precios[MAX_PRODUCTOS], int totalProductos, char nombreBuscado[50]) {
     for (int i = 0; i < totalProductos; i++) {
         if (strcmp(nombres[i], nombreBuscado) == 0) {
             printf("El precio de %s es %.2f\n", nombres[i], precios[i]);
@@ -46,3 +58,4 @@ void buscarProducto(char nombres[MAX_PRODUCTOS][20], float precios[MAX_PRODUCTOS
     }
     printf("Producto '%s' no encontrado.\n", nombreBuscado);
 }
+
